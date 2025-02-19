@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { TextField, Button, Box } from "@mui/material";
+import { TextField, Button, Paper } from "@mui/material";
+import "./AddTodo.css";
 
 interface AddTodoProps {
   onTodoAdded: (title: string) => void;
@@ -17,22 +18,28 @@ const AddTodo = ({ onTodoAdded }: AddTodoProps) => {
   };
 
   return (
-    <Box
+    <Paper
       component="form"
       onSubmit={handleSubmit}
-      sx={{ display: "flex", gap: 2, mb: 3 }}
+      elevation={3}
+      className="todo-form"
     >
       <TextField
-        fullWidth
         label="New Todo"
         variant="outlined"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        className="todo-input"
       />
-      <Button type="submit" variant="contained" disabled={!title.trim()}>
+      <Button
+        type="submit"
+        variant="contained"
+        disabled={!title.trim()}
+        className="todo-button"
+      >
         Add
       </Button>
-    </Box>
+    </Paper>
   );
 };
 

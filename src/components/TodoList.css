@@ -1,0 +1,29 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+}
+
+.error-message {
+  color: #f44336;
+  text-align: center;
+  padding: 16px;
+}
+
+.todo-list-container {
+  height: 500px;
+  max-height: 500px;
+  overflow-y: auto;
+  position: relative;
+  background-color: #f5f5f5;
+}
+
+.loading-indicator {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+}

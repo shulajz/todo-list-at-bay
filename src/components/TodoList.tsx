@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Todo } from "../types/todo";
-import { List } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import TodoItem from "./TodoItem";
 import AddTodo from "./AddTodo";
+import SearchTodo from "./SearchTodo";
 import { fetchTodos } from "../api/todoApi";
+import "./TodoList.css";
 
 const TodoList = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -11,6 +13,11 @@ const TodoList = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredTodos = todos.filter((todo) =>
+    todo.title.toLowerCase().startsWith(searchTerm.toLowerCase())
+  );
 
   const generateId = (): number => {
     return Date.now() + Math.floor(Math.random() * 1000);
@@ -23,6 +30,7 @@ const TodoList = () => {
       setLoading(true);
       try {
         const fetchedTodos = await fetchTodos(10, currentPage * 10);
+
         if (fetchedTodos.length === 0) {
           setHasMore(false);
         } else {
@@ -36,8 +44,11 @@ const TodoList = () => {
     };
 
     getTodos();
-    // eslint-disable-next-line
   }, [currentPage]);
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
 
   const handleAddTodo = (title: string) => {
     const newTodo: Todo = {
@@ -66,7 +77,7 @@ const TodoList = () => {
     setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
-  const handleScroll = async (event: React.UIEvent<HTMLElement>) => {
+  const handleScroll = (event: React.UIEvent<HTMLElement>) => {
     const target = event.target as HTMLElement;
     const bottom =
       target.scrollHeight === target.scrollTop + target.clientHeight;
@@ -75,27 +86,24 @@ const TodoList = () => {
     }
   };
 
-  if (loading && currentPage > 0) {
-    return <div>Loading more todos...</div>;
-  }
-
   if (loading && currentPage === 0) {
-    return <div>Loading...</div>;
+    return (
+      <Box className="loading-container">
+        <CircularProgress />
+      </Box>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="error-message">{error}</div>;
   }
-  console.log("hi todos", todos);
 
   return (
     <>
       <AddTodo onTodoAdded={handleAddTodo} />
-      <List
-        onScroll={handleScroll}
-        sx={{ maxHeight: "500px", overflowY: "auto" }}
-      >
-        {todos.map((todo) => (
+      <SearchTodo onSearch={handleSearch} />
+      <Box onScroll={handleScroll} className="todo-list-container">
+        {filteredTodos.map((todo) => (
           <TodoItem
             key={todo.id}
             todo={todo}
@@ -104,7 +112,12 @@ const TodoList = () => {
             onDelete={() => handleDeleteTodo(todo.id)}
           />
         ))}
-      </List>
+        {loading && (
+          <Box className="loading-indicator">
+            <CircularProgress size={30} />
+          </Box>
+        )}
+      </Box>
     </>
   );
 };
