@@ -11,9 +11,8 @@
 }
 
 .todo-list-container {
-  height: 60vh;
+  height: auto;
   max-height: 500px;
-  min-height: 300px;
   overflow-y: auto;
   position: relative;
   background-color: #f5f5f5;
