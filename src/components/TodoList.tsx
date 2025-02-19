@@ -26,10 +26,8 @@ const TodoList = () => {
     [todos, searchTerm]
   );
 
-  const generateId = useCallback(
-    (): number => Date.now() + Math.floor(Math.random() * 1000),
-    []
-  );
+  const generateId = (): number =>
+    Date.now() + Math.floor(Math.random() * 1000);
 
   useEffect(() => {
     const getTodos = async () => {
