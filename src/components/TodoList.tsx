@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Todo } from "../types/todo";
 import { Box, CircularProgress } from "@mui/material";
 import TodoItem from "./TodoItem";
@@ -6,6 +6,8 @@ import AddTodo from "./AddTodo";
 import SearchTodo from "./SearchTodo";
 import { fetchTodos } from "../api/todoApi";
 import "./TodoList.css";
+
+const ITEMS_PER_PAGE = 10;
 
 const TodoList = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -15,21 +17,28 @@ const TodoList = () => {
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredTodos = todos.filter((todo) =>
-    todo.title.toLowerCase().startsWith(searchTerm.toLowerCase())
+  // Memoized filtered todos to avoid unnecessary recalculations
+  const filteredTodos = useMemo(
+    () =>
+      todos.filter((todo) =>
+        todo.title.toLowerCase().startsWith(searchTerm.toLowerCase())
+      ),
+    [todos, searchTerm]
   );
 
-  const generateId = (): number => {
-    return Date.now() + Math.floor(Math.random() * 1000);
-  };
+  const generateId = useCallback(
+    (): number => Date.now() + Math.floor(Math.random() * 1000),
+    []
+  );
 
   useEffect(() => {
     const getTodos = async () => {
-      if (loading) return;
-
       setLoading(true);
       try {
-        const fetchedTodos = await fetchTodos(10, currentPage * 10);
+        const fetchedTodos = await fetchTodos(
+          ITEMS_PER_PAGE,
+          currentPage * ITEMS_PER_PAGE
+        );
 
         if (fetchedTodos.length === 0) {
           setHasMore(false);

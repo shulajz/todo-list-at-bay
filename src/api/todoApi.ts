@@ -7,7 +7,6 @@ export const fetchTodos = async (limit: number, start: number) => {
     const response = await axios.get(
       `${API_URL}?_limit=${limit}&_start=${start}`
     );
-    console.log("respos=", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching todos:", error);
