@@ -1,26 +1,16 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Container, Typography, Button } from "@mui/material";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container maxWidth="sm" sx={{ textAlign: "center", mt: 5 }}>
+      <Typography variant="h4" gutterBottom>
+        Welcome to My React TypeScript App with MUI
+      </Typography>
+      <Button variant="contained" color="primary">
+        Click Me
+      </Button>
+    </Container>
   );
-}
+};
 
 export default App;
