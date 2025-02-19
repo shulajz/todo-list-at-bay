@@ -5,7 +5,7 @@ import "./App.css";
 const App = () => {
   return (
     <Container maxWidth="md">
-      <Typography variant="h3" align="center" className="title">
+      <Typography sx={{ mt: 4 }} variant="h3" align="center" className="title">
         Todo App
       </Typography>
       <TodoList />
