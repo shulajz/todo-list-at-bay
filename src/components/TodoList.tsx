@@ -1,0 +1,112 @@
+import { useState, useEffect } from "react";
+import { Todo } from "../types/todo";
+import { List } from "@mui/material";
+import TodoItem from "./TodoItem";
+import AddTodo from "./AddTodo";
+import { fetchTodos } from "../api/todoApi";
+
+const TodoList = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+
+  const generateId = (): number => {
+    return Date.now() + Math.floor(Math.random() * 1000);
+  };
+
+  useEffect(() => {
+    const getTodos = async () => {
+      if (loading) return;
+
+      setLoading(true);
+      try {
+        const fetchedTodos = await fetchTodos(10, currentPage * 10);
+        if (fetchedTodos.length === 0) {
+          setHasMore(false);
+        } else {
+          setTodos((prev) => [...prev, ...fetchedTodos]);
+        }
+      } catch (err) {
+        setError("Failed to load todos");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getTodos();
+    // eslint-disable-next-line
+  }, [currentPage]);
+
+  const handleAddTodo = (title: string) => {
+    const newTodo: Todo = {
+      id: generateId(),
+      title,
+      completed: false,
+    };
+    setTodos((prev) => [newTodo, ...prev]);
+  };
+
+  const handleUpdateTodo = (updatedTodo: Todo) => {
+    setTodos((prev) =>
+      prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+    );
+  };
+
+  const handleToggleTodo = (id: number) => {
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  const handleDeleteTodo = (id: number) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  };
+
+  const handleScroll = async (event: React.UIEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement;
+    const bottom =
+      target.scrollHeight === target.scrollTop + target.clientHeight;
+    if (bottom && hasMore && !loading) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  if (loading && currentPage > 0) {
+    return <div>Loading more todos...</div>;
+  }
+
+  if (loading && currentPage === 0) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+  console.log("hi todos", todos);
+
+  return (
+    <>
+      <AddTodo onTodoAdded={handleAddTodo} />
+      <List
+        onScroll={handleScroll}
+        sx={{ maxHeight: "500px", overflowY: "auto" }}
+      >
+        {todos.map((todo) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            onToggle={() => handleToggleTodo(todo.id)}
+            onUpdate={handleUpdateTodo}
+            onDelete={() => handleDeleteTodo(todo.id)}
+          />
+        ))}
+      </List>
+    </>
+  );
+};
+
+export default TodoList;

@@ -1,14 +1,13 @@
-import { Container, Typography, Button } from "@mui/material";
+import { Container, Typography } from "@mui/material";
+import TodoList from "./components/TodoList";
 
 const App = () => {
   return (
-    <Container maxWidth="sm" sx={{ textAlign: "center", mt: 5 }}>
-      <Typography variant="h4" gutterBottom>
-        Welcome to My React TypeScript App with MUI
+    <Container maxWidth="md">
+      <Typography variant="h4" align="center" sx={{ mt: 4 }}>
+        Todo App
       </Typography>
-      <Button variant="contained" color="primary">
-        Click Me
-      </Button>
+      <TodoList />
     </Container>
   );
 };
